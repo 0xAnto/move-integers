@@ -116,6 +116,15 @@ module move_int::i128 {
         }
     }
 
+    // Returns the modulo of two I128 numbers
+    public fun mod(a: I128, b: I128): I128 {
+        assert!(!is_zero(b), DIVISION_BY_ZERO);
+        let r = abs_u128(a) % abs_u128(b);
+        if (r == 0) return zero();
+        // Result takes the sign of the dividend (a)
+        if (is_neg(a)) neg_from(r) else from(r)
+    }
+
     public fun min(a: I128, b: I128): I128 {
         if (lt(a, b)) { a }
         else { b }

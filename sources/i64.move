@@ -106,6 +106,18 @@ module move_int::i64 {
         }
     }
 
+    // Returns the modulo of two I64 numbers
+    // The result has the same sign as the dividend (`a`), following the truncated division convention.
+    // Equivalent to: `a - (a / b) * b`, where division truncates toward zero.
+    // Aborts if the divisor (`b`) is zero.
+    public fun mod(a: I64, b: I64): I64 {
+        assert!(!is_zero(b), DIVISION_BY_ZERO);
+        let r = abs_u64(a) % abs_u64(b);
+        if (r == 0) return zero();
+        // Result takes the sign of the dividend (a)
+        if (is_neg(a)) neg_from(r) else from(r)
+    }
+
     // Returns the minimum of two I64 numbers
     public fun min(a: I64, b: I64): I64 {
         if (lt(a, b)) { a }

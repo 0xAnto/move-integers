@@ -2,7 +2,7 @@
 module move_int::i128_test {
     use move_int::i128::{as_u128, from, neg_from, abs, abs_u128, add, sub, mul,
         div, wrapping_add, wrapping_sub, overflowing_add, overflowing_sub, pow, neg,
-        sign, cmp, min, max, eq, gt, lt, gte, lte, and, or, is_zero, is_neg, zero
+        sign, cmp, min, max, eq, gt, lt, gte, lte, and, or, is_zero, is_neg, zero, mod, Self
     };
 
     // Constants for testing
@@ -302,5 +302,51 @@ module move_int::i128_test {
     #[expected_failure(abort_code = 0, location = move_int::i128)]
     fun test_abs_overflow() {
         abs(neg_from(MIN_AS_U128));
+    }
+
+    #[test]
+    fun test_mod_general_and_edge_cases() {
+        // Basic sign combinations
+        assert!(eq(mod(from(7), from(3)), from(1)), 0);         // pos % pos
+        assert!(eq(mod(neg_from(7), from(3)), neg_from(1)), 0); // neg % pos
+        assert!(eq(mod(from(7), neg_from(3)), from(1)), 0);     // pos % neg
+        assert!(eq(mod(neg_from(7), neg_from(3)), neg_from(1)), 0); // neg % neg
+
+        // Zero dividend
+        assert!(eq(mod(zero(), from(5)), zero()), 0);
+
+        // Zero remainder (exact division)
+        assert!(eq(mod(from(6), from(3)), zero()), 0);
+
+        // Modulo by 1
+        assert!(eq(mod(from(100), from(1)), zero()), 0);
+        assert!(eq(mod(from(100), neg_from(1)), zero()), 0);
+
+        // Smaller dividend than divisor
+        assert!(eq(mod(from(2), from(5)), from(2)), 0);
+        assert!(eq(mod(neg_from(2), from(5)), neg_from(2)), 0);
+
+        // Large numbers
+        assert!(eq(mod(from(MAX_AS_U128), from(8)),from(7)), 0);
+
+        // Mathematical property: (a / b) * b + (a % b) == a
+        let a = from(17);
+        let b = from(5);
+        let quotient = div(a, b);
+        let remainder = mod(a, b);
+        let reconstructed = add(mul(quotient, b), remainder);
+        assert!(eq(a, reconstructed), 0);
+    }
+
+    #[test]
+    #[expected_failure(abort_code = i128::DIVISION_BY_ZERO)]
+    fun test_mod_division_by_zero() {
+        mod(from(5), zero());
+    }
+
+    #[test]
+    #[expected_failure(abort_code = i128::DIVISION_BY_ZERO)]
+    fun test_mod_zero_by_zero() {
+        mod(zero(), zero());
     }
 }

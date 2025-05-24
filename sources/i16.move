@@ -107,6 +107,15 @@ module move_int::i16 {
         }
     }
 
+    // Returns the modulo of two I16 numbers
+    public fun mod(a: I16, b: I16): I16 {
+        assert!(!is_zero(b), DIVISION_BY_ZERO);
+        let r = abs_u16(a) % abs_u16(b);
+        if (r == 0) return zero();
+        // Result takes the sign of the dividend (a)
+        if (is_neg(a)) neg_from(r) else from(r)
+    }
+
     // Returns the minimum of two I16 numbers
     public fun min(a: I16, b: I16): I16 {
         if (lt(a, b)) { a }

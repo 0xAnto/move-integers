@@ -121,6 +121,15 @@ module move_int::i256 {
         }
     }
 
+    // Returns the modulo of two I256 numbers
+    public fun mod(a: I256, b: I256): I256 {
+        assert!(!is_zero(b), DIVISION_BY_ZERO);
+        let r = abs_u256(a) % abs_u256(b);
+        if (r == 0) return zero();
+        // Result takes the sign of the dividend (a)
+        if (is_neg(a)) neg_from(r) else from(r)
+    }
+
     public fun min(a: I256, b: I256): I256 {
         if (lt(a, b)) { a }
         else { b }

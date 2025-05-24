@@ -106,6 +106,15 @@ module move_int::i8 {
         }
     }
 
+    // Returns the modulo of two I8 numbers
+    public fun mod(a: I8, b: I8): I8 {
+        assert!(!is_zero(b), DIVISION_BY_ZERO);
+        let r = abs_u8(a) % abs_u8(b);
+        if (r == 0) return zero();
+        // Result takes the sign of the dividend (a)
+        if (is_neg(a)) neg_from(r) else from(r)
+    }
+
     // Returns the minimum of two I8 numbers
     public fun min(a: I8, b: I8): I8 {
         if (lt(a, b)) { a }

@@ -107,6 +107,15 @@ module move_int::i32 {
         }
     }
 
+    // Returns the modulo of two I32 numbers
+    public fun mod(a: I32, b: I32): I32 {
+        assert!(!is_zero(b), DIVISION_BY_ZERO);
+        let r = abs_u32(a) % abs_u32(b);
+        if (r == 0) return zero();
+        // Result takes the sign of the dividend (a)
+        if (is_neg(a)) neg_from(r) else from(r)
+    }
+
     // Returns the minimum of two I32 numbers
     public fun min(a: I32, b: I32): I32 {
         if (lt(a, b)) { a }
