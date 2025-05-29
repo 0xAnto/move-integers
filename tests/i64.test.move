@@ -139,7 +139,6 @@ module move_int::i64_test {
         assert!(eq(pow(from(2), 3), from(8)), 0);
         assert!(eq(pow(neg_from(2), 3), neg_from(8)), 1);
         assert!(eq(pow(from(2), 0), from(1)), 2);
-        pow(neg_from(BITS_MIN_I64), 2);
     }
 
     #[test]

@@ -118,7 +118,6 @@ module move_int::i64 {
     }
 
     /// Raises an I64 number to a u64 power
-    // TODO: Spec method that plays nicely with loops ("enter loop, variable(s) base, exponent, result havocked and reassigned")
     public fun pow(base: I64, exponent: u64): I64 {
         if (exponent == 0) {
             return from(1)

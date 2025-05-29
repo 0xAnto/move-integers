@@ -144,6 +144,27 @@ spec move_int::i128 {
         ensures is_neg(num1) ==> gte(mul(num2, result), num1);
     }
 
+    spec mod {
+        // Abort conditions - div
+        // Division by zero
+        // aborts_if is_zero(num2) with DIVISION_BY_ZERO;
+
+        aborts_with DIVISION_BY_ZERO, OVERFLOW;
+
+        // FIXME: Timeout
+        // Fundamental identity of mod: a mod b = a - b * (a / b)
+        // ensures result == sub(num1, mul(num2, div(num1, num2)));
+
+        // Result has the same sign as the dividend (Solidity-style behavior)
+        ensures is_zero(result) || sign(result) == sign(num1);
+
+        // // If b is not zero, then:
+        // ensures !is_zero(num2) && !is_zero(num1) ==> (
+        //     // Result is less than absolute value of divisor
+        //     abs(result).bits < abs(num2).bits
+        // );
+    }
+
     spec abs {
         aborts_if is_neg(v) && v.bits <= BITS_MIN_I128 with OVERFLOW;
 
@@ -166,6 +187,25 @@ spec move_int::i128 {
     spec max {
         ensures to_num(a) >= to_num(b) ==> to_num(result) == to_num(a);
         ensures to_num(a) < to_num(b) ==> to_num(result) == to_num(b);
+    }
+
+    spec pow {
+        pragma opaque;
+
+        // Blanket aborts with overflow if any intermediate multiplication overflows
+        aborts_with OVERFLOW;
+
+        // Final result relationship (if no abort)
+        ensures [abstract] result != spec_pow(base, exponent);
+    }
+
+    spec fun spec_pow(base: I128, exponent: u64): I128 {
+        if (exponent == 0) {
+            from(1)
+        }
+        else {
+            mul(base,spec_pow(base, exponent-1))
+        }
     }
 
     spec sign {

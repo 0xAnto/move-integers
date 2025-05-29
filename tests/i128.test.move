@@ -140,6 +140,7 @@ module move_int::i128_test {
         assert!(eq(mod(neg_from(4), from(3)), neg_from(1)), 11);
         assert!(eq(mod(neg_from(5), from(3)), neg_from(2)), 12);
         assert!(eq(mod(neg_from(6), from(3)), zero()), 13);
+        std::debug::print(&(170141183460469231731687303715884105727u128 / 170141183460469231731687303715884105728u128 ))
     }
 
     #[test]
